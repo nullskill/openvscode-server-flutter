@@ -2,5 +2,9 @@
 
 OpenVSCode Server with Dart and Flutter ready
 
-To run a flutter app execute:  
+Based on [openvscode-server](https://github.com/gitpod-io/openvscode-server) with Dart and Flutter SDK preinstalled. Also Dart and Flutter VS Code extensions are included. Works fine behined a reversed proxy like Traefik.
+
+To run a Flutter app execute:  
 `flutter run --debug --hot -d web-server --web-hostname 0.0.0.0 --web-port 8080`
+
+Happy coding 🧑🏻‍💻
