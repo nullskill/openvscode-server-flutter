@@ -1,7 +1,7 @@
 ARG VERSION="stable"
 ARG FLUTTER_HOME="/opt/flutter"
 ARG PUB_CACHE="/var/tmp/.pub_cache"
-ARG FLUTTER_VERSION="3.19.4"
+ARG FLUTTER_VERSION="3.19.5"
 ARG FLUTTER_ARCHIVE="flutter_linux_${FLUTTER_VERSION}-stable.tar.xz"
 ARG FLUTTER_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/${FLUTTER_ARCHIVE}"
 
