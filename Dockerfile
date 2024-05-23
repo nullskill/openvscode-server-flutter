@@ -1,7 +1,7 @@
 ARG VERSION="stable"
 ARG FLUTTER_HOME="/opt/flutter"
 ARG PUB_CACHE="/var/tmp/.pub_cache"
-ARG FLUTTER_VERSION="3.22.0"
+ARG FLUTTER_VERSION="3.22.1"
 ARG FLUTTER_ARCHIVE="flutter_linux_${FLUTTER_VERSION}-stable.tar.xz"
 ARG FLUTTER_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/${FLUTTER_ARCHIVE}"
 
@@ -59,6 +59,9 @@ RUN flutter pub global activate dartdoc \
 RUN echo "Flutter and Dart installation completed successfully."
 
 USER openvscode-server
+
+RUN echo "Adding Oh My Bash"
+RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)" --unattended
 
 RUN echo "Adding Dart & Flutter VSCode extensions..."
 SHELL ["/bin/bash", "-c"]
