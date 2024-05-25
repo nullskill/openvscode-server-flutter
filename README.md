@@ -10,4 +10,11 @@ To run a Flutter app execute:
 flutter run --debug --hot -d web-server --web-hostname 0.0.0.0 --web-port 8080
 ```
 
+## Features
+
+- Dart and Flutter SDK preinstalled
+- Dart and Flutter VSCode extensions preinstalled
+- Oh My Bash with default theme preinstalled
+- Flutter completion for Bash added
+
 Happy coding 🧑🏻‍💻
