@@ -63,6 +63,9 @@ USER openvscode-server
 RUN echo "Adding Oh My Bash"
 RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)" --unattended
 
+RUN echo "Adding Flutter completion for Bash"
+RUN flutter bash-completion > ~/.bashrc
+
 RUN echo "Adding Dart & Flutter VSCode extensions..."
 SHELL ["/bin/bash", "-c"]
 RUN \
