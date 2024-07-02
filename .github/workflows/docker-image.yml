@@ -12,13 +12,13 @@ on:
 jobs:
   check_flutter_release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       version_changed: ${{ steps.check_version.outputs.version_changed }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_ACTION_PAT }}
 
       - name: Set up Python
         uses: actions/setup-python@v2
