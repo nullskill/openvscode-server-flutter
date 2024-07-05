@@ -7,28 +7,28 @@ jobs:
   get-release-tag:
     runs-on: ubuntu-latest
     steps:
-      - name: Get latest image digest
-        id: get_latest_digest
-        run: |
-          RESPONSE=$(curl -s "https://registry.hub.docker.com/v2/repositories/gitpod/openvscode-server/tags/latest")
-          LATEST_DIGEST=$(echo $RESPONSE | jq -r '.digest')
-          echo "LATEST_DIGEST=$LATEST_DIGEST" >> $GITHUB_OUTPUT
-          echo "Latest image digest: $LATEST_DIGEST"
-
-      - name: Find matching release tag
+      - name: Find release tag
         id: get_release_tag
         run: |
           RESPONSE=$(curl -s "https://registry.hub.docker.com/v2/repositories/gitpod/openvscode-server/tags?page_size=100")
-          RELEASE_TAG=$(echo $RESPONSE | jq -r --arg DIGEST "${{ steps.get_latest_digest.outputs.LATEST_DIGEST }}" '.results[] | select(.digest == $DIGEST) | .name' | head -n 1)
-          if [ ! -z "$RELEASE_TAG" ]; then
-            echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_OUTPUT
-            echo "Matching release tag: $RELEASE_TAG"
-          else
-            echo "No matching release tag found"
+          RELEASE_TAG=$(echo $RESPONSE | jq -r '
+            .results as $results |
+            $results | map(.name == "latest") | index(true) as $latest_index |
+            if $latest_index != null then
+              $results[$latest_index].digest as $latest_digest |
+              $results[$latest_index+1:] | map(select(.digest == $latest_digest)) | first | .name
+            else
+              null
+            end
+          ')
+          if [ -z "$RELEASE_TAG" ]; then
+            RELEASE_TAG="latest"
+            echo "No specific release tag found after 'latest', using 'latest'"
           fi
+          echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_OUTPUT
+          echo "Release tag: $RELEASE_TAG"
 
       - name: Use the release tag
-        if: steps.get_release_tag.outputs.RELEASE_TAG
         run: |
-          echo "The release tag for latest is ${{ steps.get_release_tag.outputs.RELEASE_TAG }}"
+          echo "The release tag is ${{ steps.get_release_tag.outputs.RELEASE_TAG }}"
         # You can use this version in subsequent steps or jobs
