@@ -4,6 +4,12 @@ OpenVSCode Server with Dart and Flutter ready
 
 Based on [openvscode-server](https://github.com/gitpod-io/openvscode-server) with Dart and Flutter SDK preinstalled. Also Dart and Flutter VS Code extensions are included. Works fine behined a reversed proxy like Traefik.
 
+Image build args:
+
+| Argument | Example | Description |
+| - | - | - |
+| `FLUTTER_VERSION` | 3.22.1 | Desirable Flutter Stable Version |
+
 To run a Flutter app execute:
 
 ```shell
