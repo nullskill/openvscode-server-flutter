@@ -1,17 +1,90 @@
 name: Docker Image CI
 
 on:
+  schedule:
+    - cron: '0 0 * * 0'  # Запускается каждое воскресенье в 00:00 UTC
+  workflow_dispatch:  # Позволяет запускать workflow вручную
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
 jobs:
+  check_flutter_release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      version_changed: ${{ steps.check_version.outputs.version_changed }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Check for new Flutter stable release
+        id: check_version
+        run: |
+          python <<EOF
+          import requests
+          import json
+          import os
+
+          def get_latest_stable_version():
+              response = requests.get('https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json')
+              releases = json.loads(response.text)
+              for release in releases['releases']:
+                  if release['channel'] == 'stable':
+                      return release['version']
+              return None
+
+          latest_stable_version = get_latest_stable_version()
+
+          if latest_stable_version:
+              try:
+                  with open('flutter_current_version.txt', 'r') as f:
+                      current_version = f.read().strip()
+              except FileNotFoundError:
+                  current_version = ''
+
+              if latest_stable_version != current_version:
+                  print(f"Новый стабильный релиз Flutter обнаружен: {latest_stable_version}")
+                  with open('flutter_current_version.txt', 'w') as f:
+                      f.write(latest_stable_version)
+                  print("version_changed=true", file=open(os.environ['GITHUB_OUTPUT'], 'a'))
+              else:
+                  print("Новых стабильных релизов Flutter не обнаружено")
+                  print("version_changed=false", file=open(os.environ['GITHUB_OUTPUT'], 'a'))
+          else:
+              print("Не удалось получить информацию о стабильных релизах Flutter")
+              print("version_changed=false", file=open(os.environ['GITHUB_OUTPUT'], 'a'))
+          EOF
+
+      - name: Commit and push if changed
+        if: steps.check_version.outputs.version_changed == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add flutter_current_version.txt
+          git commit -m "Update Flutter stable version" -a || echo "No changes to commit"
+          git push
 
   build:
-
+    needs: check_flutter_release
+    if: |
+      needs.check_flutter_release.outputs.version_changed == 'true' ||
+      github.event_name == 'push' ||
+      github.event_name == 'pull_request' ||
+      github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-
     steps:
       -
         name: Checkout
