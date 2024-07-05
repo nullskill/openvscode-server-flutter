@@ -56,15 +56,15 @@ jobs:
                   current_version = ''
 
               if latest_stable_version != current_version:
-                  print(f"Новый стабильный релиз Flutter обнаружен: {latest_stable_version}")
+                  print(f"New stable release of Flutter detected: {latest_stable_version}")
                   with open('flutter_current_version.txt', 'w') as f:
                       f.write(latest_stable_version)
                   print("version_changed=true", file=open(os.environ['GITHUB_OUTPUT'], 'a'))
               else:
-                  print("Новых стабильных релизов Flutter не обнаружено")
+                  print("No new stable releases of Flutter found")
                   print("version_changed=false", file=open(os.environ['GITHUB_OUTPUT'], 'a'))
           else:
-              print("Не удалось получить информацию о стабильных релизах Flutter")
+              print("Unable to get info about stable releases of Flutter")
               print("version_changed=false", file=open(os.environ['GITHUB_OUTPUT'], 'a'))
           EOF
 
