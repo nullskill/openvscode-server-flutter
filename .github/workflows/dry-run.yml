@@ -1,20 +1,33 @@
 name: Dry-run
 
 on:
-  workflow_dispatch:  # Позволяет запускать workflow вручную
+  workflow_dispatch:  # This allows manual triggering
 
 jobs:
-  dry_run:
+  get-release-tag:
     runs-on: ubuntu-latest
     steps:
-      - name: Get latest tag of openvscode-server from Docker Hub
-        id: get_version
+      - name: Get latest image digest
+        id: get_latest_digest
         run: |
-          RESPONSE=$(curl -s "https://hub.docker.com/v2/repositories/gitpod/openvscode-server/tags/?page_size=1&ordering=last_updated")
-          LATEST_TAG=$(echo $RESPONSE | jq -r '.results[0].name')
-          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_OUTPUT
-          echo "Latest OpenVSCode Server tag: $LATEST_TAG"
+          RESPONSE=$(curl -s "https://registry.hub.docker.com/v2/repositories/gitpod/openvscode-server/tags/latest")
+          LATEST_DIGEST=$(echo $RESPONSE | jq -r '.digest')
+          echo "LATEST_DIGEST=$LATEST_DIGEST" >> $GITHUB_OUTPUT
+          echo "Latest image digest: $LATEST_DIGEST"
 
-      - name: Print the openvscode-server version
+      - name: Find matching release tag
+        id: get_release_tag
         run: |
-          echo "The latest version is ${{ steps.get_version.outputs.LATEST_TAG }}"
+          RESPONSE=$(curl -s "https://registry.hub.docker.com/v2/repositories/gitpod/openvscode-server/tags?page_size=100")
+          RELEASE_TAG=$(echo $RESPONSE | jq -r --arg DIGEST "${{ steps.get_latest_digest.outputs.LATEST_DIGEST }}" '.results[] | select(.digest == $DIGEST) | .name' | head -n 1)
+          if [ -z "$RELEASE_TAG" ]; then
+            RELEASE_TAG="latest"
+            echo "No specific release tag found, using 'latest'"
+          fi
+          echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_OUTPUT
+          echo "Release tag: $RELEASE_TAG"
+
+      - name: Use the release tag
+        run: |
+          echo "The release tag is ${{ steps.get_release_tag.outputs.RELEASE_TAG }}"
+        # You can use this version in subsequent steps or jobs
