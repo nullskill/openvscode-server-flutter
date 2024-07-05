@@ -1,21 +1,15 @@
+FROM gitpod/openvscode-server:latest
+
 ARG VERSION="stable"
 ARG FLUTTER_HOME="/opt/flutter"
 ARG PUB_CACHE="/var/tmp/.pub_cache"
-ARG FLUTTER_VERSION="3.22.1"
-ARG FLUTTER_ARCHIVE="flutter_linux_${FLUTTER_VERSION}-stable.tar.xz"
-ARG FLUTTER_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/${FLUTTER_ARCHIVE}"
+ARG FLUTTER_VERSION
+ENV FLUTTER_VERSION=${FLUTTER_VERSION:-3.22.1}
 
-FROM gitpod/openvscode-server:latest
+RUN echo "Building with Flutter version: $FLUTTER_VERSION"
 
-USER root
-WORKDIR /
-
-ARG VERSION
-ARG FLUTTER_HOME
-ARG PUB_CACHE
-ARG FLUTTER_ARCHIVE
-ARG FLUTTER_URL
-
+ENV FLUTTER_ARCHIVE="flutter_linux_${FLUTTER_VERSION}-stable.tar.xz"
+ENV FLUTTER_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/${FLUTTER_ARCHIVE}"
 ENV VERSION=$VERSION \
     FLUTTER_HOME=$FLUTTER_HOME \
     FLUTTER_ROOT=$FLUTTER_HOME \
@@ -23,6 +17,9 @@ ENV VERSION=$VERSION \
     PATH="${PATH}:${FLUTTER_HOME}/bin:${PUB_CACHE}/bin" \
     OPENVSCODE_SERVER_ROOT="/home/.openvscode-server" \
     OPENVSCODE="${OPENVSCODE_SERVER_ROOT}/bin/openvscode-server"
+
+USER root
+WORKDIR /
 
 # Install prerequisites
 RUN echo "Installing prerequisites..."
