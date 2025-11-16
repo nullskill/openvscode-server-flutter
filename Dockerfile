@@ -55,11 +55,10 @@ RUN flutter pub global activate dartdoc \
     && flutter doctor && flutter precache --universal
 RUN echo "Flutter and Dart installation completed successfully."
 
-RUN echo "Adding FVM"
-# RUN echo "export FVM_ALLOW_ROOT=true"
-RUN bash -c "$(sudo curl -fsSL https://fvm.app/install.sh)" --unattended
-
 USER openvscode-server
+
+RUN echo "Adding FVM"
+RUN bash -c "$(curl -fsSL https://fvm.app/install.sh)" --unattended
 
 RUN echo "Adding Oh My Bash"
 RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)" --unattended
