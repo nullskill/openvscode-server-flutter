@@ -56,9 +56,11 @@ RUN flutter pub global activate dartdoc \
 RUN echo "Flutter and Dart installation completed successfully."
 
 USER openvscode-server
+WORKDIR /home/openvscode-server
 
 RUN echo "Adding FVM"
 RUN bash -c "$(curl -fsSL https://fvm.app/install.sh)" --unattended
+ENV PATH="/home/openvscode-server/.fvm/bin:${PATH}"
 
 RUN echo "Adding Oh My Bash"
 RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)" --unattended
