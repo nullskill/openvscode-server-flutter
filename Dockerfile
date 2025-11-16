@@ -56,8 +56,8 @@ RUN flutter pub global activate dartdoc \
 RUN echo "Flutter and Dart installation completed successfully."
 
 RUN echo "Adding FVM"
-RUN echo "export FVM_ALLOW_ROOT=true"
-RUN bash -c "$(curl -fsSL https://fvm.app/install.sh)" --unattended
+# RUN echo "export FVM_ALLOW_ROOT=true"
+RUN bash -c "$(sudo curl -fsSL https://fvm.app/install.sh)" --unattended
 
 USER openvscode-server
 
