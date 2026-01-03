@@ -16,6 +16,11 @@ To run a Flutter app execute:
 flutter run --debug --hot -d web-server --web-hostname 0.0.0.0 --web-port 8080
 ```
 
+NB: Due to some issues with Hot reload and Hot restart on the latest Flutter versions since 3.35 and later on when you are serving your project behind a reversed proxy like Traefik via https you might want to avoid browser errors like "Mixed Content... requested an insecure XMLHttpRequest endpoint" adding `--no-web-experimental-hot-reload` to the command:
+```shell
+flutter run --debug --hot -d web-server --web-hostname 0.0.0.0 --web-port 8080 --no-web-experimental-hot-reload
+```
+
 ## Features
 
 - Dart and Flutter SDK preinstalled
