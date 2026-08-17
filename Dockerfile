@@ -59,8 +59,8 @@ USER openvscode-server
 WORKDIR /home/openvscode-server
 
 RUN echo "Adding FVM"
-RUN FVM_DIR="/home/openvscode-server/.fvm" bash -c "$(curl -fsSL https://fvm.app/install.sh)" --unattended
-ENV PATH="/home/openvscode-server/.fvm/bin:${PATH}"
+RUN bash -c "$(curl -fsSL https://fvm.app/install.sh)" --unattended
+ENV PATH="/home/workspace/fvm/bin:$PATH"
 
 RUN echo "Adding Oh My Bash"
 RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)" --unattended
